@@ -1,0 +1,29 @@
+{
+  "bitwise": true,
+  "curly": true,
+  "eqeqeq": true,
+  "esversion": 10,
+  "forin": true,
+  "freeze": true,
+  "futurehostile": true,
+  "latedef": true,
+  "leanswitch": true,
+  "maxerr": 100,
+  "noarg": true,
+  "nocomma": true,
+  "nonbsp": true,
+  "nonew": true,
+  /* See https://jakearchibald.com/2017/await-vs-return-vs-return-await/
+    Basically, "return await" on a function call is redundant unless in a try block, where it is necessary to get both the result and exception cases to work.
+  */
+  "noreturnawait": true,
+  "regexpu": true,
+  /* outer means that we get all of the shadowing warnings, right? */
+  "shadow": "outer",
+  "singleGroups": true,
+  "strict": true,
+  "trailingcomma": true, 
+  "undef": true,
+  "unused": true,
+  "varstmt": true
+}
