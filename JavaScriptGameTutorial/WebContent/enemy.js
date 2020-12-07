@@ -1,12 +1,15 @@
 /**
  * Represents an enemy character in the game.
  */
-export default class Enemy {
+export class Enemy {
 	
 	/**
-	 * Creates a new instance of Enemy with a width and height of 10 and located at the given coordinates.
-	 * @param x The x coordinate of the location for this Enemy.
-	 * @param y The y coordinate of the location for this Enemy.
+	 * Creates a new instance of Enemy with a width and height of 10 and located at the given coordinates.<br>
+	 * <br>
+	 * Minimum height is assumed to be 0.
+	 * @param x - The x coordinate of the location for this Enemy.
+	 * @param y - The y coordinate of the location for this Enemy.
+	 * @param maximumHeight - Represents the limit of vertical movement for this Enemy.
 	 */
 	constructor(x, y, maximumHeight) {
 		this.x = x;
@@ -18,14 +21,10 @@ export default class Enemy {
 	}
 	
 	/**
-	 * Draws this Enemy at its location.
-	 * @param context The drawing context, whose methods will be used to draw this instance.
+	 * Updates this Enemy's state.  <br>
+	 * <br>
+	 * This should be called during each iteration of the game's event loop.
 	 */
-	draw(context) {
-		context.fillStyle = "red";
-		context.fillRect(this.x, this.y, this.width, this.height);
-	}
-	
 	update() {
 		this.y = this.y + this.direction;
 		if (this.y <= 0 || this.y + this.height >= this.maximumHeight) {

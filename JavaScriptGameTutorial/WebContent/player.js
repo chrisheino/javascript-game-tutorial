@@ -1,12 +1,13 @@
 /**
  * Represents the player's character in the game.
  */
-export default class Player {
+export class Player {
 	
 	/**
 	 * Creates a new instance of Player at the given coordinates and a size of 10 by 10.
-	 * @param x The x coordinate of the player's location on the screen.
-	 * @param y They y coordinate of the player's location on the screen.
+	 * @param x - The x coordinate of the player's location on the screen.
+	 * @param y - They y coordinate of the player's location on the screen.
+	 * @param maximumHeight - The vertical limit of movement for the Player.
 	 */
 	constructor(x, y, maximumHeight) {
 		this.x = x;
@@ -18,14 +19,10 @@ export default class Player {
 	}
 	
 	/**
-	 * Draws the player at its location.
-	 * @param context The drawing context, whose methods will be used to draw this instance.
+	 * Updates this Player's state.  <br>
+	 * <br>
+	 * This should be called during each iteration of the game's event loop.
 	 */
-	draw(context) {
-		context.fillStyle = "blue";
-		context.fillRect(this.x, this.y, this.width, this.height);
-	}
-	
 	update() {
 		this.y = this.y + this.direction;
 		if (this.y <= 0 || this.y + this.height >= this.maximumHeight) {

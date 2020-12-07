@@ -1,37 +1,56 @@
-import Enemy from "./enemy.js";
-import Player from "./player.js";
+import {Enemy} from "./enemy.js";
+import {Physics} from "./physics.js";
+import {Player} from "./player.js";
+import {Renderer} from "./renderer.js";
 
-/* globals document: false, window: false */
-
-const canvas = document.getElementById("game-layer");
-const context = canvas.getContext("2d");
-
-const player = new Player(100, 175, canvas.height);
-const enemy1 = new Enemy(20, 25, canvas.height);
-const enemy2 = new Enemy(80, 25, canvas.height);
-const enemy3 = new Enemy(160, 25, canvas.height);
-
-function frameUpdate() {
+/**
+ *  Represents the game as a whole; coordinates between all of the different objects in the game system.<br>
+ *  <br>
+ *  There should only be one instance of this class in the system.
+ */
+export class Game {
 	
-	"use strict";
-
-	context.fillStyle = "grey";
-	context.fillRect(0, 0, canvas.width, canvas.height);
-
-	player.update();
-	player.draw(context);
+	/**
+	 * Creates a new instance of the game that draws to the given canvas in the given window.
+	 * @param window - The window that contains the game.
+	 * @param canvas - The canvas on which the game's graphics are drawn.
+	 */
+	constructor(window, canvas) {
+		this._width = canvas.width;
+		this._height = canvas.height;
+		this._window = window;
+		this._entities = [];
+		this._physics = new Physics(this._entities);
+		this._renderer = new Renderer(canvas, this._entities);
+	}
 	
-	enemy1.update();
-	enemy1.draw(context);
+	/**
+	 * Starts the game.  
+	 * 
+	 * Only call this method once.
+	 */
+	start() {
+		this._entities.push(new Player(100, 25, this._height));
+		this._entities.push(new Enemy(20, 25, this._height));
+		this._entities.push(new Enemy(80, 25, this._height));
+		this._entities.push(new Enemy(160, 25, this._height));
+		
+		this._window.requestAnimationFrame(this._update.bind(this));
+	}
 	
-	enemy2.update();
-	enemy2.draw(context);
-	
-	enemy3.update();
-	enemy3.draw(context);
-
-	window.requestAnimationFrame(frameUpdate);
+	/*
+	 * Causes the game to update the game state and draw it to the canvas.
+	 * 
+	 * Private method.
+	 */
+	_update() {
+		this._physics.update();
+		for (let index = 0; index < this._entities.length; index++) {
+			const currentEntity = this._entities[index];
+			currentEntity.update();
+		}
+		this._renderer.render();
+		
+		this._window.requestAnimationFrame(this._update.bind(this));
+	}
 }
-
-frameUpdate();
-
