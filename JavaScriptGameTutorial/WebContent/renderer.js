@@ -10,27 +10,37 @@ export class Renderer {
 	 * Creates a new instance of a Renderer, responsible for drawing the given entities onto the given canvas.
 	 * @param canvas - Provides the dimensions and context in which the game entities will be drawn.
 	 * @param entities - The game entities to draw onto the canvas.
+	 * @param gameBoundary - The boundary of movement for entities in the game.
 	 */
-	constructor(canvas, entities) {
-		this.width = canvas.width;
-		this.height = canvas.height;
-		this.context = canvas.getContext("2d");
-		this.entities = entities;
+	constructor(canvas, entities, gameBoundary) {
+		this._context = canvas.getContext("2d");
+		this._entities = entities;
+		this._gameBoundary = gameBoundary;
+		this._enemyRankToColor = [
+			"rgb(150, 7, 7)",
+			"rgb(150, 89, 7)",
+			"rgb(56, 150, 7)",
+			"rgb(7, 150, 122)",
+			"rgb(46, 7, 150)",
+		];
 	}
 	
 	/** 
-	 * Clear the canvas and redraw the game entities on it.
+	 * Clear the canvas and redraw the game entities on it.<br>
+	 * <br>
+	 * Note: changeOfTime is not used yet.
+	 * @param {number} changeOfTime - The amount of time that has occurred since the last call to this method.
 	 */
-	render() {
-		this.context.fillStyle = "grey";
-		this.context.fillRect(0, 0, this.width, this.height);
+	render(changeOfTime) {
+		this._context.fillStyle = "black";
+		this._context.fillRect(this._gameBoundary.left(), this._gameBoundary.top(), this._gameBoundary.right(), this._gameBoundary.bottom());
 		
-		for (let index = 0; index < this.entities.length; index++) {
-			const currentEntity = this.entities[index];
-			if (currentEntity instanceof Enemy) {
-				this._drawEnemy(currentEntity);
-			} else if (currentEntity instanceof Player) {
-				this._drawPlayer(currentEntity);
+		for (let index = 0; index < this._entities.length; index++) {
+			const currentEntity = this._entities[index];
+			if (currentEntity instanceof Player) {
+				this._drawRectangle("rgb(255, 255, 0)", currentEntity);
+			} else if (currentEntity instanceof Enemy) {
+				this._drawRectangle(this._enemyRankToColor[currentEntity.getRank()], currentEntity);
 			} else {
 				throw new Error('Unimplemented type of entity being rendered: ' + currentEntity);
 			}
@@ -38,22 +48,19 @@ export class Renderer {
 	}
 	
 	/*
-	 * Draws the player at its location.  Internal use only.
-	 * @access private
-	 * @param {Player} player - The object to render on the screen represented by the context.
+	 * Draws the entity as a rectangle of the given color.<br>
+	 * <br>
+	 * Note: I am not sure what the type of the rgb() return value is.
+	 * @param {Entity} A Player or Enemy to draw as a rectangle.
+	 * @param {rgb} The color for this entity.
 	 */
-	_drawPlayer(player) {
-		this.context.fillStyle = "blue";
-		this.context.fillRect(player.x, player.y, player.width, player.height);
-	}
-	
-	/*
-	 * Draws the enemy at its location.  Internal use only.
-	 * @access private
-	 * @param {Enemy} enemy The object to render on the screen represented by the context.
-	 */
-	_drawEnemy(enemy) {
-		this.context.fillStyle = "red";
-		this.context.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+	_drawRectangle(color, entity) {
+		this._context.fillStyle = color;
+		const position = entity.getPosition();
+		this._context.fillRect(
+				position.getXCoordinate() - entity.getWidth() / 2,
+				position.getYCoordinate() - entity.getHeight() / 2,
+				entity.getWidth(),
+				entity.getHeight());
 	}
 }

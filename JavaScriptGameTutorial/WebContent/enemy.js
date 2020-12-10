@@ -1,34 +1,42 @@
+import {Entity} from "./entity.js";
+
 /**
  * Represents an enemy character in the game.
  */
-export class Enemy {
+export class Enemy extends Entity {
 	
 	/**
-	 * Creates a new instance of Enemy with a width and height of 10 and located at the given coordinates.<br>
-	 * <br>
-	 * Minimum height is assumed to be 0.
-	 * @param x - The x coordinate of the location for this Enemy.
-	 * @param y - The y coordinate of the location for this Enemy.
-	 * @param maximumHeight - Represents the limit of vertical movement for this Enemy.
+	 * Creates a new instance of Enemy with a width of 13 and height of 10.
+	 * @param {Vector2D} position - The current location on the screen of this enemy's upper-left-hand corner.
+	 * @param {number} speed - The current speed of this enemy
+	 * @param {Vector2D} direction - The direction of this enemy's movement.
+	 * @param {number} rank - Determines this enemy's screen position and score value.
+	 * @param {Rectangle} boundary - This enemy is not allowed to move outside of the dimensions defined by this Rectangle.
 	 */
-	constructor(x, y, maximumHeight) {
-		this.x = x;
-		this.y = y;
-		this.width = 10;
-		this.height = 10;
-		this.direction = 1;
-		this.maximumHeight = maximumHeight;
+	constructor(position, speed, direction, rank, boundary) {
+		super(position, speed, direction, 13, 10);
+		this._rank = rank;
+		this._boundary = boundary;
 	}
 	
 	/**
-	 * Updates this Enemy's state.  <br>
-	 * <br>
-	 * This should be called during each iteration of the game's event loop.
+	 * The rank of this enemy.
+	 * @return {number} The rank of this enemy.
 	 */
-	update() {
-		this.y = this.y + this.direction;
-		if (this.y <= 0 || this.y + this.height >= this.maximumHeight) {
-			this.direction *= -1;
+	getRank() {
+		return this._rank;
+	}
+	
+	/**
+	 * Updates this Enemy's state. 
+	 * @param {number} changeOfTime - The amount of time that has occurred since the last call to this method.
+	 */
+	update(changeOfTime) {
+		super.update(changeOfTime);
+		const currentCollisionRectangle = this.createCollisionRectangle();
+		if (currentCollisionRectangle.top() <= this._boundary.top() ||
+				currentCollisionRectangle.bottom() >= this._boundary.bottom()) {
+			this.changeDirection(this.getDirection().scalarMultipliedBy(-1));
 		}
 	}
 }
